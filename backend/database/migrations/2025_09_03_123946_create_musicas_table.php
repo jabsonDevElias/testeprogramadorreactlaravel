@@ -11,11 +11,14 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('musicas', function (Blueprint $table) {
+
             $table->id();
             $table->string('titulo');
             $table->integer('visualizacoes');
             $table->text('youtube_id');
             $table->text('thumb');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->boolean('status')->default(true);
             $table->timestamps();
 
