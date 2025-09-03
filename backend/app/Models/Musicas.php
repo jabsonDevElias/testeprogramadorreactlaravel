@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Musicas extends Model
 {
-    //
+    protected $fillable = [
+        'titulo',
+        'visualizacoes',
+        'youtube_id',
+        'thumb',
+        'user_id'
+    ];
 }
