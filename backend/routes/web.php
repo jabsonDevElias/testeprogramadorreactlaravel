@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Route;
 //ROTAS PARA LOGIN
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/musicas/{idMusica?}', [MusicasController::class, 'listarMusicas'])->name("idMusica");
+
 
 Route::middleware('auth:api')->group(function () {
 
@@ -18,7 +20,6 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/atualiza-usuarios/{idUsuario?}', [UsuariosController::class, 'atualizaUsuario'])->name("idUsuario");
 
     //ROTAS MUSICAS
-    Route::get('/musicas/{idMusica?}', [MusicasController::class, 'listarMusicas'])->name("idMusica");
     Route::post('/cadastra-musicas', [MusicasController::class, 'cadastraMusicas']);
     Route::put('/atualiza-musicas/{idMusica?}', [MusicasController::class, 'atualizaMusicas'])->name("idMusica");
     Route::delete('/deletar-musicas/{idMusica?}', [MusicasController::class, 'deletaMusicas'])->name("idMusica");
