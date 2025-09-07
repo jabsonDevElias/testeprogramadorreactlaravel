@@ -11,6 +11,7 @@ class Musicas extends Model
         'visualizacoes',
         'youtube_id',
         'thumb',
+        'aprovado',
         'user_id'
     ];
 }

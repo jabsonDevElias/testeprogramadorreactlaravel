@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->text('youtube_id');
             $table->text('thumb');
             $table->unsignedBigInteger('user_id');
+            $table->boolean('aprovado')->default(false);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->boolean('status')->default(true);
             $table->timestamps();

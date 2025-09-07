@@ -4,9 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UsuariosController extends Controller
 {
+
+    public function getIdToken()
+    {
+        try {
+            // Pega o usuário autenticado pelo token
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if ($user) {
+
+                $query = User::query();
+
+                if ($user->id) {
+                    $query->where('id', $user->id);
+                }
+
+                $usuario = $query->select('id', 'name', 'email')->first();
+
+                return response()->json($usuario, 200);
+            }
+
+            return response()->json(['valid' => false], 401);
+
+        } catch (TokenExpiredException $e) {
+            return response()->json(['error' => 'Token expirado'], 401);
+        } catch (TokenInvalidException $e) {
+            return response()->json(['error' => 'Token inválido'], 401);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Token ausente'], 401);
+        }
+    }
     public function listarUsuarios(Request $request, $idUsuario = null)
     {
 

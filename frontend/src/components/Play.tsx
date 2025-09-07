@@ -1,4 +1,3 @@
-
 import { faPauseCircle, faPlayCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
@@ -10,100 +9,121 @@ declare global {
   }
 }
 
-export default function Play() {
+interface PlayProps {
+  titulo: string;
+  views: number;
+  id_youtube: string;
+  apiReady: boolean;
+  isActive: boolean;
+  setActivePlayer: (id: string | null) => void;
+}
 
+const Play: React.FC<PlayProps> = ({
+  titulo,
+  views,
+  id_youtube,
+  apiReady,
+  isActive,
+  setActivePlayer,
+}) => {
   const playerRef = useRef<any>(null);
   const [progress, setProgress] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [ready, setReady] = useState(false);
+  const playerInitialized = useRef(false);
 
   useEffect(() => {
+    if (!apiReady || playerInitialized.current) return;
 
-
-    if (!window.YT) {
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      document.body.appendChild(tag);
-    }
-
-    (window as any).onYouTubeIframeAPIReady = () => {
-      playerRef.current = new (window as any).YT.Player("youtube-player", {
-        height: "0",
-        width: "0",
-        videoId: "dQw4w9WgXcQ",
-        playerVars: {
-          controls: 0,
-          autoplay: 0,
+    playerRef.current = new window.YT.Player(`youtube-player-${id_youtube}`, {
+      height: "0",
+      width: "0",
+      videoId: id_youtube,
+      playerVars: { controls: 0, autoplay: 0 },
+      events: {
+        onReady: () => {
+          setReady(true);
         },
-        events: {
-          onReady: () => {
-            setReady(true);
-            console.log("Player pronto");
-          },
-          onStateChange: onPlayerStateChange,
+        onStateChange: (event: any) => {
+          const YT = window.YT;
+          if (event.data === YT.PlayerState.PLAYING) setPlaying(true);
+          else if (
+            event.data === YT.PlayerState.PAUSED ||
+            event.data === YT.PlayerState.ENDED
+          )
+            setPlaying(false);
         },
-      });
-    };
-  }, []);
+      },
+    });
+
+    playerInitialized.current = true;
+  }, [apiReady, id_youtube]);
 
   useEffect(() => {
     let interval: any;
     if (playing && playerRef.current) {
       interval = setInterval(() => {
-        const duration = playerRef.current.getDuration();
-        const current = playerRef.current.getCurrentTime();
-        if (duration) {
-          setProgress(current / duration);
-        }
+        const duration = playerRef.current.getDuration?.();
+        const current = playerRef.current.getCurrentTime?.();
+        if (duration) setProgress(current / duration);
       }, 500);
     }
     return () => clearInterval(interval);
   }, [playing]);
 
-  const onPlayerStateChange = (event: any) => {
-    const YT = (window as any).YT;
-    if (event.data === YT.PlayerState.PLAYING) {
-      setPlaying(true);
-    } else {
-      setPlaying(false);
+  // Quando não é mais ativo, pausa o player
+  useEffect(() => {
+    if (!isActive && playerRef.current && playing) {
+      playerRef.current.pauseVideo();
     }
-  };
+  }, [isActive, playing]);
 
   const playAudio = () => {
-    if (!playing) {
-      if (ready && playerRef.current && playerRef.current.playVideo) {
-        playerRef.current.playVideo();
-      }
-    } else {
+    if (!ready || !playerRef.current) return;
 
-      if (ready && playerRef.current && playerRef.current.pauseVideo) {
-        playerRef.current.pauseVideo();
-      }
+    if (!playing) {
+      setActivePlayer(id_youtube);
+      playerRef.current.playVideo();
+    } else {
+      playerRef.current.pauseVideo();
+      setActivePlayer(null);
     }
   };
 
-
   return (
-    <div className="d-flex rounded rounded-2 justify-content-around align-items-center flex-wrap">
+    <div className={`d-flex rounded rounded-2 justify-content-around align-items-center flex-wrap p-2 ${!playing ? (""):("bg-warning")}`}>
       <div className="col-12 d-flex justify-content-around">
-        <div className="col-3 p-0 d-flex align-items-center justify-content-center img-fluid rounded rounded-2 border border-white" style={{backgroundImage:`url('https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg')`,backgroundRepeat: "no-repeat",backgroundSize: 'cover',backgroundPosition:"center"}}>
+        <div
+          onClick={playAudio}
+          className="col-3 p-0 d-flex align-items-center justify-content-center img-fluid rounded rounded-2 border border-white"
+          style={{
+            backgroundImage: `url('https://img.youtube.com/vi/${id_youtube}/hqdefault.jpg')`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
           <span role="button" className="fs-3">
-            {(!playing) ? <FontAwesomeIcon icon={faPlayCircle} onClick={playAudio} /> : <FontAwesomeIcon icon={faPauseCircle} onClick={playAudio} />}
+            {!playing ? (
+              <FontAwesomeIcon icon={faPlayCircle} />
+            ) : (
+              <FontAwesomeIcon icon={faPauseCircle} />
+            )}
           </span>
         </div>
         <div className="col-9 ms-2">
-          <h3 className="m-0">Titulo do Video</h3>
-          <p className="m-0">Views 8451545</p>
+          <h6 className="m-0">{titulo}</h6>
+          <p className="m-0">Views {views}</p>
         </div>
       </div>
       <div className="col-12 d-flex justify-content-around align-items-center mt-2">
-        <div id="youtube-player"></div>
+        <div id={`youtube-player-${id_youtube}`}></div>
         <div className="col-12">
           <div
             className="progress rounded rounded-2"
             role="progressbar"
             aria-label="Example 1px high"
-            aria-valuenow={25}
+            aria-valuenow={progress * 100}
             aria-valuemin={0}
             aria-valuemax={100}
             style={{ height: "3px" }}
@@ -117,4 +137,6 @@ export default function Play() {
       </div>
     </div>
   );
-}
+};
+
+export default Play;
