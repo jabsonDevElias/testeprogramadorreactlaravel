@@ -70,7 +70,7 @@ class MusicasController extends Controller
         try {
             $query = Musicas::query();
 
-            $query->where('status',true);
+            
 
             if ($idMusica) {
                 $query->where('id', $idMusica);
@@ -80,6 +80,7 @@ class MusicasController extends Controller
                 $query->where('aprovado', $request->input('aprovado'));
             }
 
+            $query->where('status',true);
             
            $musicas = $query->paginate(5);
 
@@ -139,9 +140,9 @@ class MusicasController extends Controller
 
             $usuario->titulo = $request->input('titulo');
             $usuario->visualizacoes = $request->input('visualizacoes');
-            $usuario->youtube_id = $request->input('youtube_id');
-            $usuario->thumb = $request->input('thumb');
-            $usuario->user_id = $request->input('user_id');
+            // $usuario->youtube_id = $request->input('youtube_id');
+            // $usuario->thumb = $request->input('thumb');
+            // $usuario->user_id = $request->input('user_id');
 
             $usuario->save();
 

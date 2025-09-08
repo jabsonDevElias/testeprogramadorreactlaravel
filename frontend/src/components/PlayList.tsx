@@ -8,6 +8,7 @@ interface Musica {
   titulo: string;
   visualizacoes: number;
   youtube_id: string;
+  id:number;
 
 }
 
@@ -100,12 +101,13 @@ export default function PlayList() {
                   apiReady={apiReady}
                   isActive={activePlayer === musica.youtube_id}
                   setActivePlayer={setActivePlayer}
+                  id={musica.id}
                 />
               </div>
             )) : musicasVazias()}
                             <div className="col-12 d-flex justify-content-center mt-3">
                     <ul className="pagination">
-                        {/* Botão anterior */}
+                      
                         <li className={`page-item ${paginaAtual === 1 ? "disabled" : ""}`}>
                             <button
                                 className="page-link"
@@ -116,7 +118,6 @@ export default function PlayList() {
                             </button>
                         </li>
 
-                        {/* Números das páginas */}
                         {Array.from({ length: paginas }, (_, i) => i + 1).map((page) => (
                             <li
                                 key={page}
@@ -131,7 +132,7 @@ export default function PlayList() {
                             </li>
                         ))}
 
-                        {/* Botão próximo */}
+                       
                         <li className={`page-item ${paginaAtual === paginas ? "disabled" : ""}`}>
                             <button
                                 className="page-link"

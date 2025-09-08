@@ -2,6 +2,7 @@ import { faCheck, faTrash, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import api from "../service/api";
 
+
 interface SugestaoProps {
     titulo: string;
     views: number;
@@ -14,11 +15,12 @@ interface SugestaoProps {
 const Sugestao: React.FC<SugestaoProps> = ({ titulo, views, id_youtube, data, id }) => {
 
     const token = localStorage.getItem("authToken");
+    
 
 
     async function AprovarMusica(id: number) {
         try {
-            const response = await api.put(`/autorizar-musicas/${id}`);
+            await api.put(`/autorizar-musicas/${id}`);
             window.location.reload();
 
         } catch (error) {
@@ -28,7 +30,7 @@ const Sugestao: React.FC<SugestaoProps> = ({ titulo, views, id_youtube, data, id
 
     async function reprovarMusica(id: number) {
         try {
-            const response = await api.delete(`/deletar-musicas/${id}`);
+            await api.delete(`/deletar-musicas/${id}`);
             window.location.reload();
 
         } catch (error) {
@@ -60,18 +62,18 @@ const Sugestao: React.FC<SugestaoProps> = ({ titulo, views, id_youtube, data, id
                 <div className="col-2 ms-2">
                     <p className="m-0">{data}</p>
                 </div>
-                {(token) ? <div className="d-flex justify-content-end col-2">
-                    <button className="btn bg-success" onClick={() => AprovarMusica(id)}>
+                {(token) ? <div className="d-flex justify-content-end col-12 col-md-2">
+                    <button className="btn bg-success" onClick={() => AprovarMusica(id)} aria-label="aprovar música">
                         <FontAwesomeIcon icon={faCheck} />
                     </button>
-                    <button className="btn bg-danger ms-1" onClick={() => reprovarMusica(id)}>
+                    <button className="btn bg-danger ms-1" onClick={() => reprovarMusica(id)} aria-label="reprovar música">
                         <FontAwesomeIcon icon={faTrash} />
                     </button>
-                    <a href={`https://www.youtube.com/watch?v=${id_youtube}`} target="_blank" className="btn bg-warning ms-1">
+                    <a href={`https://www.youtube.com/watch?v=${id_youtube}`} target="_blank" aria-label="ver vídeo" className="btn bg-warning ms-1">
                         <FontAwesomeIcon icon={faVideo} />
                     </a>
-                </div> : <div className="d-flex justify-content-end col-2">
-                    <a href={`https://www.youtube.com/watch?v=${id_youtube}`} target="_blank" className="btn bg-warning ms-1">
+                </div> : <div className="d-flex justify-content-end col-12 col-md-2">
+                    <a href={`https://www.youtube.com/watch?v=${id_youtube}`} target="_blank" aria-label="ver vídeo" className="btn bg-warning ms-1">
                         <FontAwesomeIcon icon={faVideo} />
                     </a></div>}
 

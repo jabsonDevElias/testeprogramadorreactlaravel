@@ -137,6 +137,7 @@ export default function Sugestoes() {
                     className="btn btn-outline-warning"
                     type="button"
                     id="button-addon2"
+                    aria-label="Adicionar música"
                 >
                     <FontAwesomeIcon icon={faAdd} />
                 </button>
@@ -169,12 +170,12 @@ export default function Sugestoes() {
                                 className="page-link"
                                 onClick={() => BuscaMusicas(paginaAtual - 1)}
                                 disabled={paginaAtual === 1}
+                                aria-label="pagination-1"
                             >
                                 &laquo;
                             </button>
                         </li>
 
-                        {/* Números das páginas */}
                         {Array.from({ length: paginas }, (_, i) => i + 1).map((page) => (
                             <li
                                 key={page}
@@ -183,18 +184,20 @@ export default function Sugestoes() {
                                 <button
                                     className="page-link"
                                     onClick={() => BuscaMusicas(page)}
+                                    aria-label={`btn-pagination-${page}`}
                                 >
                                     {page}
                                 </button>
                             </li>
                         ))}
 
-                        {/* Botão próximo */}
+                      
                         <li className={`page-item ${paginaAtual === paginas ? "disabled" : ""}`}>
                             <button
                                 className="page-link"
                                 onClick={() => BuscaMusicas(paginaAtual + 1)}
                                 disabled={paginaAtual === paginas}
+                                aria-label="pagination-2"
                             >
                                 &raquo;
                             </button>

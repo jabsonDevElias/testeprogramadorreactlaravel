@@ -1,6 +1,7 @@
-import { faPauseCircle, faPlayCircle } from "@fortawesome/free-solid-svg-icons";
+import { faList, faPauseCircle, faPlayCircle, faRefresh, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 declare global {
   interface Window {
@@ -12,6 +13,7 @@ declare global {
 interface PlayProps {
   titulo: string;
   views: number;
+  id:number;
   id_youtube: string;
   apiReady: boolean;
   isActive: boolean;
@@ -25,12 +27,16 @@ const Play: React.FC<PlayProps> = ({
   apiReady,
   isActive,
   setActivePlayer,
+  id
 }) => {
   const playerRef = useRef<any>(null);
   const [progress, setProgress] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [ready, setReady] = useState(false);
   const playerInitialized = useRef(false);
+
+  const token = localStorage.getItem("authToken");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!apiReady || playerInitialized.current) return;
@@ -71,7 +77,6 @@ const Play: React.FC<PlayProps> = ({
     return () => clearInterval(interval);
   }, [playing]);
 
-  // Quando não é mais ativo, pausa o player
   useEffect(() => {
     if (!isActive && playerRef.current && playing) {
       playerRef.current.pauseVideo();
@@ -116,9 +121,9 @@ const Play: React.FC<PlayProps> = ({
           <p className="m-0">Views {views}</p>
         </div>
       </div>
-      <div className="col-12 d-flex justify-content-around align-items-center mt-2">
+      <div className="col-12 d-flex justify-content-between align-items-center mt-2">
         <div id={`youtube-player-${id_youtube}`}></div>
-        <div className="col-12">
+        <div className={`${(token)?"col-10":"col-12"}`}>
           <div
             className="progress rounded rounded-2"
             role="progressbar"
@@ -134,6 +139,10 @@ const Play: React.FC<PlayProps> = ({
             ></div>
           </div>
         </div>
+        {(token)?        <div className="col-2 ms-2">
+          <FontAwesomeIcon icon={faList} className="btn btn-light p-1" onClick={(()=>navigate(`/musica/${id}`))}/>
+        </div>:""}
+
       </div>
     </div>
   );

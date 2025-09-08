@@ -12,11 +12,11 @@ export default function Home() {
 
                 <div className="col-12 d-flex justify-content-between flex-wrap">
                     <div className="col-12 mt-3 d-flex justify-content-between flex-wrap">
-                        <div className="col-6 p-1">
+                        <div className="col-12 col-md-6 p-1">
                             <Banner />
                         </div>
 
-                        <div className="col-6 p-1">
+                        <div className="col-12 col-md-6 p-1">
                             <PlayList />
                         </div>
                     </div>
